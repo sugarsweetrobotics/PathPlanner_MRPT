@@ -6,127 +6,16 @@
  */
 
 #include "MobileRobotSVC_impl.h"
+#include <iostream>
 
-/*
- * Example implementational code for IDL interface RTC::OGMapper
- */
-OGMapperSVC_impl::OGMapperSVC_impl()
-{
-  // Please add extra constructor code here.
-}
+#include <mrpt/slam/COccupancyGridMap2D.h>
+#include <mrpt/slam/CPathPlanningCircularRobot.h>
+#include <mrpt/poses/CPose2D.h>
 
 
-OGMapperSVC_impl::~OGMapperSVC_impl()
-{
-  // Please add extra destructor code here.
-}
-
-
-/*
- * Methods corresponding to IDL attributes and operations
- */
-RTC::RETURN_VALUE OGMapperSVC_impl::initializeMap(const RTC::OGMapConfig& config, const RTC::Pose2D& initialPose)
-{
-	RTC::RETURN_VALUE result;
-  // Please insert your code here and remove the following warning pragma
-#ifndef WIN32
-  #warning "Code missing in function <RTC::RETURN_VALUE OGMapperSVC_impl::initializeMap(const RTC::OGMapConfig& config, const RTC::Pose2D& initialPose)>"
-#endif
-  return result;
-}
-
-RTC::RETURN_VALUE OGMapperSVC_impl::startMapping()
-{
-	RTC::RETURN_VALUE result;
-  // Please insert your code here and remove the following warning pragma
-#ifndef WIN32
-  #warning "Code missing in function <RTC::RETURN_VALUE OGMapperSVC_impl::startMapping()>"
-#endif
-  return result;
-}
-
-RTC::RETURN_VALUE OGMapperSVC_impl::stopMapping()
-{
-	RTC::RETURN_VALUE result;
-  // Please insert your code here and remove the following warning pragma
-#ifndef WIN32
-  #warning "Code missing in function <RTC::RETURN_VALUE OGMapperSVC_impl::stopMapping()>"
-#endif
-  return result;
-}
-
-RTC::RETURN_VALUE OGMapperSVC_impl::suspendMapping()
-{
-	RTC::RETURN_VALUE result;
-  // Please insert your code here and remove the following warning pragma
-#ifndef WIN32
-  #warning "Code missing in function <RTC::RETURN_VALUE OGMapperSVC_impl::suspendMapping()>"
-#endif
-  return result;
-}
-
-RTC::RETURN_VALUE OGMapperSVC_impl::resumeMapping()
-{
-	RTC::RETURN_VALUE result;
-  // Please insert your code here and remove the following warning pragma
-#ifndef WIN32
-  #warning "Code missing in function <RTC::RETURN_VALUE OGMapperSVC_impl::resumeMapping()>"
-#endif
-  return result;
-}
-
-RTC::RETURN_VALUE OGMapperSVC_impl::getState(RTC::MAPPER_STATE& state)
-{
-	RTC::RETURN_VALUE result;
-  // Please insert your code here and remove the following warning pragma
-#ifndef WIN32
-  #warning "Code missing in function <RTC::RETURN_VALUE OGMapperSVC_impl::getState(MAPPER_STATE& state)>"
-#endif
-  return result;
-}
-
-RTC::RETURN_VALUE OGMapperSVC_impl::requestCurrentBuiltMap(RTC::OGMap_out map)
-{
-	RTC::RETURN_VALUE result;
-  // Please insert your code here and remove the following warning pragma
-#ifndef WIN32
-  #warning "Code missing in function <RTC::RETURN_VALUE OGMapperSVC_impl::requestCurrentBuiltMap(OGMap_out map)>"
-#endif
-  return result;
-}
-
-
-
-// End of example implementational code
-
-/*
- * Example implementational code for IDL interface RTC::OGMapServer
- */
-OGMapServerSVC_impl::OGMapServerSVC_impl()
-{
-  // Please add extra constructor code here.
-}
-
-
-OGMapServerSVC_impl::~OGMapServerSVC_impl()
-{
-  // Please add extra destructor code here.
-}
-
-
-/*
- * Methods corresponding to IDL attributes and operations
- */
-RTC::RETURN_VALUE OGMapServerSVC_impl::requestCurrentBuiltMap(RTC::OGMap_out map)
-{
-	RTC::RETURN_VALUE result;
-  // Please insert your code here and remove the following warning pragma
-#ifndef WIN32
-  #warning "Code missing in function <RTC::RETURN_VALUE OGMapServerSVC_impl::requestCurrentBuiltMap(OGMap_out map)>"
-#endif
-  return result;
-}
-
+using namespace mrpt;
+using namespace mrpt::slam;
+using namespace std;
 
 
 // End of example implementational code
@@ -134,9 +23,12 @@ RTC::RETURN_VALUE OGMapServerSVC_impl::requestCurrentBuiltMap(RTC::OGMap_out map
 /*
  * Example implementational code for IDL interface RTC::PathPlanner
  */
+
+
 PathPlannerSVC_impl::PathPlannerSVC_impl()
 {
-  // Please add extra constructor code here.
+	CPose2D start(0,0,0);
+	CPose2D goal(0,0,0);
 }
 
 
@@ -149,17 +41,32 @@ PathPlannerSVC_impl::~PathPlannerSVC_impl()
 /*
  * Methods corresponding to IDL attributes and operations
  */
-RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& param, RTC::Path2D_out path)
+
+
+
+RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC::TimedPose2D & currentPose,const RTC::TimedPose2D & targetGoal ,RTC::Path2D_out path)
 {
 	RTC::RETURN_VALUE result;
-  // Please insert your code here and remove the following warning pragma
-#ifndef WIN32
-  #warning "Code missing in function <RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& param, RTC::Path2D_out path)>"
-#endif
+	
+	CPathPlanningCircularRobot pathPlanning;
+
+	COccupancyGridMap2D gridmap;	
+	//OGap -> COccupancyGridMap2Dに変換するコードを書く
+
+	//TimedPose2d -> CPose2D 
+	setStart(currentPose);
+	setGoal(targetGoal);
+
+	bool notFound = false;
+	std::deque <TPoint2D> tPath;
+		
+	//plan path
+	pathPlanning.computePath(gridmap, getStart(), getGoal(), tPath, notFound, 100.0f);
+
+	//deque <TPoint2D>  -> Path2Dに変換するコードを書く
+
   return result;
 }
-
-
 
 // End of example implementational code
 

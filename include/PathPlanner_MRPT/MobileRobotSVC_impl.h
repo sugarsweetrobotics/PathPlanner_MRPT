@@ -14,67 +14,16 @@
 #ifndef MOBILEROBOTSVC_IMPL_H
 #define MOBILEROBOTSVC_IMPL_H
  
-/*!
- * @class OGMapperSVC_impl
- * Example class implementing IDL interface RTC::OGMapper
- */
-class OGMapperSVC_impl
- : public virtual POA_RTC::OGMapper,
-   public virtual PortableServer::RefCountServantBase
-{
- private:
-   // Make sure all instances are built on the heap by making the
-   // destructor non-public
-   //virtual ~OGMapperSVC_impl();
+#include <iostream>
 
- public:
-  /*!
-   * @brief standard constructor
-   */
-   OGMapperSVC_impl();
-  /*!
-   * @brief destructor
-   */
-   virtual ~OGMapperSVC_impl();
+#include <mrpt/slam/COccupancyGridMap2D.h>
+#include <mrpt/slam/CPathPlanningCircularRobot.h>
+#include <mrpt/poses/CPose2D.h>
 
-   // attributes and operations
-   RTC::RETURN_VALUE initializeMap(const RTC::OGMapConfig& config, const RTC::Pose2D& initialPose);
-   RTC::RETURN_VALUE startMapping();
-   RTC::RETURN_VALUE stopMapping();
-   RTC::RETURN_VALUE suspendMapping();
-   RTC::RETURN_VALUE resumeMapping();
-   RTC::RETURN_VALUE getState(RTC::MAPPER_STATE& state);
-   RTC::RETURN_VALUE requestCurrentBuiltMap(RTC::OGMap_out map);
+using namespace mrpt;
+using namespace mrpt::slam;
+using namespace std;
 
-};
-
-/*!
- * @class OGMapServerSVC_impl
- * Example class implementing IDL interface RTC::OGMapServer
- */
-class OGMapServerSVC_impl
- : public virtual POA_RTC::OGMapServer,
-   public virtual PortableServer::RefCountServantBase
-{
- private:
-   // Make sure all instances are built on the heap by making the
-   // destructor non-public
-   //virtual ~OGMapServerSVC_impl();
-
- public:
-  /*!
-   * @brief standard constructor
-   */
-   OGMapServerSVC_impl();
-  /*!
-   * @brief destructor
-   */
-   virtual ~OGMapServerSVC_impl();
-
-   // attributes and operations
-   RTC::RETURN_VALUE requestCurrentBuiltMap(RTC::OGMap_out map);
-
-};
 
 /*!
  * @class PathPlannerSVC_impl
@@ -85,26 +34,37 @@ class PathPlannerSVC_impl
    public virtual PortableServer::RefCountServantBase
 {
  private:
-   // Make sure all instances are built on the heap by making the
-   // destructor non-public
-   //virtual ~PathPlannerSVC_impl();
+	mrpt::poses::CPose2D start;
+	mrpt::poses::CPose2D goal;
 
  public:
   /*!
    * @brief standard constructor
    */
    PathPlannerSVC_impl();
+
+   	mrpt::poses::CPose2D getStart(){return start;}
+	mrpt::poses::CPose2D getGoal(){return goal;}
+
+	void setStart(const RTC::TimedPose2D & tp){
+		start.x(tp.data.position.x);
+		start.y(tp.data.position.y);
+		start.phi(tp.data.heading);
+	}
+	void setGoal(const RTC::TimedPose2D & tp){
+		goal.x(tp.data.position.x);
+		goal.y(tp.data.position.y);
+		goal.phi(tp.data.heading);
+	}
   /*!
    * @brief destructor
    */
    virtual ~PathPlannerSVC_impl();
 
    // attributes and operations
-   RTC::RETURN_VALUE planPath(const RTC::PathPlanParameter& param, RTC::Path2D_out path);
+   RTC::RETURN_VALUE planPath(const RTC::OGMap & map,const RTC::TimedPose2D & currentPose,const RTC::TimedPose2D & targetGoal ,RTC::Path2D_out path);
 
 };
-
-
 
 #endif // MOBILEROBOTSVC_IMPL_H
 

@@ -114,12 +114,12 @@ RTC::ReturnCode_t PathPlanner_MRPT::onDeactivated(RTC::UniqueId ec_id)
   return RTC::RTC_OK;
 }
 
-/*
+
 RTC::ReturnCode_t PathPlanner_MRPT::onExecute(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
-*/
+
 
 /*
 RTC::ReturnCode_t PathPlanner_MRPT::onAborting(RTC::UniqueId ec_id)
