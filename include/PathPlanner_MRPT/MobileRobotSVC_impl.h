@@ -43,6 +43,14 @@ class PathPlannerSVC_impl
    */
    PathPlannerSVC_impl();
 
+  /*!
+   * @brief destructor
+   */
+   virtual ~PathPlannerSVC_impl();
+
+   // attributes and operations
+   RTC::RETURN_VALUE planPath(const RTC::OGMap & map,const RTC::TimedPose2D & currentPose,const RTC::TimedPose2D & targetGoal ,RTC::Path2D_out path);
+   
    	mrpt::poses::CPose2D getStart(){return start;}
 	mrpt::poses::CPose2D getGoal(){return goal;}
 
@@ -56,13 +64,7 @@ class PathPlannerSVC_impl
 		goal.y(tp.data.position.y);
 		goal.phi(tp.data.heading);
 	}
-  /*!
-   * @brief destructor
-   */
-   virtual ~PathPlannerSVC_impl();
-
-   // attributes and operations
-   RTC::RETURN_VALUE planPath(const RTC::OGMap & map,const RTC::TimedPose2D & currentPose,const RTC::TimedPose2D & targetGoal ,RTC::Path2D_out path);
+	void OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyGridMap2D *gridmap);
 
 };
 
