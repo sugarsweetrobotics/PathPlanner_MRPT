@@ -43,41 +43,23 @@ PathPlannerSVC_impl::~PathPlannerSVC_impl()
  */
 
 void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyGridMap2D *gridmap) {
-
-	gridmap->setSize(0-ogmap.config.width/2, ogmap.config.width/2, 0-ogmap.config.height/2, ogmap.config.height/2, ogmap.config.xScale, 0.5f);
-	for(int i=0; i<gridmap->getSizeX(); i++){
-		for(int j=0; j<gridmap->getSizeY(); j++){	
-			gridmap->setCell( i, j, ogmap.map.cells[i,j]);
+	gridmap->setSize(0, ogmap.map.width, 0, ogmap.map.height, ogmap.config.xScale, 0.5f);
+	
+	//‚±‚±‚¨‚©‚µ‚¢
+	for(int i=0; i<gridmap->getSizeY(); i++){
+		for(int j=0; j < gridmap->getSizeX(); j++){	
+			gridmap->setCell( i, j, ogmap.map.cells[i* gridmap->getSizeX() + j]);
 		}
 	}
-
-	/*
-	ogmap.config.width = map.getWidth();
-	ogmap.config.height = map.getHeight();
-	ogmap.config.xScale = map.getResolution();
-	ogmap.config.yScale = map.getResolution();
-	ogmap.config.origin.position.x = -map.getOriginX() * map.getResolution();
-	ogmap.config.origin.position.y = -map.getOriginY() * map.getResolution();
-	ogmap.config.origin.heading = 0.0;
-	ogmap.map.width = map.getWidth();
-	ogmap.map.height = map.getHeight();
-	ogmap.map.row = map.getOriginX();
-	ogmap.map.column = map.getOriginY();
-	ogmap.map.cells.length(map.getWidth() * map.getHeight());
-	for(uint32_t i = 0;i < map.getHeight();i++) {
-		for(uint32_t j = 0;j < map.getWidth();j++) {
-			ogmap.cells[(i)*map.getWidth() + (map.getWidth()-1-j)] = map.getCell(i, j);
-		}
-	}
-	*/
 }
 
 
 RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC::TimedPose2D & currentPose,const RTC::TimedPose2D & targetGoal ,RTC::Path2D_out path)
 {
 	RTC::RETURN_VALUE result;
-	
+
 	CPathPlanningCircularRobot pathPlanning;
+	pathPlanning.robotRadius = 0.3; //robot radius should be able to change by configuration
 
 	COccupancyGridMap2D gridmap;	
 	OGMapToCOccupancyGridMap(map, &gridmap);

@@ -11,7 +11,7 @@
 #   --module-category=Navigatio --module-comp-type=STATIC 
 #   --module-act-type=PERIODIC --module-max-inst=1 
 #   --config=debug:int:0 
-#   --service-idl=C:\Users\ysuga\rtm\idl\MobileRobot.idl 
+#   --service-idl=C:\Users\ogata\Desktop\MappingRTCs\PathPlanner_MRPT\idl\MobileRobot.idl 
 #   --service=pathPlanner:PathPlanner:RTC::PathPlanner 
 
 

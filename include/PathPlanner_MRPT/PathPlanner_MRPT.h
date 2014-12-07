@@ -145,7 +145,7 @@ class PathPlanner_MRPT
    * 
    * 
    */
-   virtual RTC::ReturnCode_t onExecute(RTC::UniqueId ec_id);
+  // virtual RTC::ReturnCode_t onExecute(RTC::UniqueId ec_id);
 
   /***
    *
