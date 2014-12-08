@@ -41,6 +41,7 @@ class PathPlanner_MRPT
   : public RTC::DataFlowComponentBase
 {
  public:
+	 EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   /*!
    * @brief constructor
    * @param manager Maneger Object

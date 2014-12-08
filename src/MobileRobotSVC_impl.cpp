@@ -44,11 +44,22 @@ PathPlannerSVC_impl::~PathPlannerSVC_impl()
 
 void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyGridMap2D *gridmap) {
 	gridmap->setSize(0, ogmap.map.width, 0, ogmap.map.height, ogmap.config.xScale, 0.5f);
-	
-	//‚±‚±‚¨‚©‚µ‚¢
-	for(int i=0; i<gridmap->getSizeY(); i++){
-		for(int j=0; j < gridmap->getSizeX(); j++){	
-			gridmap->setCell( i, j, ogmap.map.cells[i* gridmap->getSizeX() + j]);
+	//ogmap.map.cells.pd_buf[i * gridmap->getSizeX() + j]
+
+	for(int i=0; i < gridmap->getSizeY(); i++){
+		for(int j=0; j < gridmap->getSizeX(); j++){
+			int index = i * gridmap->getSizeX() + j;
+			int cell = ogmap.map.cells[index];
+			
+			if(cell < 100){
+				gridmap->setCell(i, j, 0);
+			}
+			else if(cell > 200){
+				gridmap->setCell(i, j, 1);
+			}
+			else{
+				gridmap->setCell(i, j, 0.5);
+			}
 		}
 	}
 }
@@ -61,7 +72,7 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC
 	CPathPlanningCircularRobot pathPlanning;
 	pathPlanning.robotRadius = 0.3; //robot radius should be able to change by configuration
 
-	COccupancyGridMap2D gridmap;	
+	COccupancyGridMap2D gridmap;
 	OGMapToCOccupancyGridMap(map, &gridmap);
 	
 

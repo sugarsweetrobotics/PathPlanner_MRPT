@@ -38,6 +38,8 @@ class PathPlannerSVC_impl
 	mrpt::poses::CPose2D goal;
 
  public:
+	 
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   /*!
    * @brief standard constructor
    */
