@@ -8,7 +8,7 @@
 #include "MobileRobotSVC_impl.h"
 #include <iostream>
 
-//#include<fstream>
+#include<fstream>
 
 #include <mrpt/slam/COccupancyGridMap2D.h>
 #include <mrpt/slam/CPathPlanningCircularRobot.h>
@@ -45,13 +45,9 @@ PathPlannerSVC_impl::~PathPlannerSVC_impl()
  */
 
 void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyGridMap2D *gridmap) {
-	//gridmap->setSize(0, ogmap.map.width, 0, ogmap.map.height, ogmap.config.xScale, 0.5f);
 	gridmap->setSize(0, ogmap.map.width, 0, ogmap.map.height, 1, 0.5f);
 	int height = gridmap->getSizeY();
 	int width =  gridmap->getSizeX();
-	
-	  ofstream ofs( "filename.csv");
-
 
 	for(int i=0; i <height ; i++){
 		for(int j=0; j <width ; j++){
@@ -93,8 +89,8 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC
 	gridmap.saveAsBitmapFile("map.png");
 
 	//TimedPose2d -> CPose2D	
-	setStart(currentPose);
-	setGoal(targetGoal);
+	setStart(currentPose,map);
+	setGoal(targetGoal,map);
 
 	cout << "Origin: " << getStart() << endl;
 	cout << "Target: " << getGoal() << endl;
@@ -114,9 +110,13 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC
 		//deque <TPoint2D>  -> Path2D_out
 		path = new RTC::Path2D(); //‚à‚µ‚©‚µ‚½‚çpath = new RTC::Path2D_out.ptr();‚©‚àH
 		path->waypoints.length(tPath.size());
+
+		ofstream ofs( "filename.csv");
+
 		for(int i = 0;i < tPath.size(); i++) {
 			path->waypoints[i].target.position.x = tPath[i].x;
 			path->waypoints[i].target.position.y = tPath[i].y;
+			ofs<<path->waypoints[i].target.position.x<<","<<path->waypoints[i].target.position.y<<endl;
 		}
 
 		std::cout << "path length:"<< path->waypoints.length() << endl;
