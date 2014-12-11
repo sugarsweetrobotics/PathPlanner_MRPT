@@ -57,13 +57,13 @@ class PathPlannerSVC_impl
 	mrpt::poses::CPose2D getGoal(){return goal;}
 
 	void setStart(const RTC::TimedPose2D & tp, const RTC::OGMap & map){
-		start.x(tp.data.position.x / map.config.yScale + map.map.column);
-		start.y(tp.data.position.y / map.config.yScale+ map.map.row);
+		start.x(map.map.column + tp.data.position.x / map.config.yScale);
+		start.y(map.map.row - tp.data.position.y / map.config.yScale);
 		start.phi(tp.data.heading);
 	}
 	void setGoal(const RTC::TimedPose2D & tp, const RTC::OGMap & map){
-		goal.x(tp.data.position.x / map.config.xScale+ map.map.column);
-		goal.y(tp.data.position.y / map.config.yScale+ map.map.row);
+		goal.x(map.map.column + tp.data.position.x / map.config.xScale);
+		goal.y(map.map.row - tp.data.position.y / map.config.yScale);
 		goal.phi(tp.data.heading);
 	}
 	void OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyGridMap2D *gridmap);

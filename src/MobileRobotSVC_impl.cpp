@@ -78,7 +78,8 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC
 {
 	RETURN_VALUE result = RETVAL_OK;
 	cout << "Start Path Planning... " << endl;
-
+	cout << "Start: " << currentPose.data.position.x <<" "<<currentPose.data.position.y<< endl;
+	cout << "Goal: " << targetGoal.data.position.x <<" "<<targetGoal.data.position.y<< endl;
 
 	CPathPlanningCircularRobot pathPlanning;
 	pathPlanning.robotRadius = 0.30f;//robot radius should be able to change by configuration
@@ -114,8 +115,8 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC
 		ofstream ofs( "filename.csv");
 
 		for(int i = 0;i < tPath.size(); i++) {
-			path->waypoints[i].target.position.x = tPath[i].x;
-			path->waypoints[i].target.position.y = tPath[i].y;
+			path->waypoints[i].target.position.x = tPath[i].x;//.x - map.map.column) * map.config.xScale;
+			path->waypoints[i].target.position.y = tPath[i].y;//.y + map.map.row) * map.config.yScale;
 			ofs<<path->waypoints[i].target.position.x<<","<<path->waypoints[i].target.position.y<<endl;
 		}
 
