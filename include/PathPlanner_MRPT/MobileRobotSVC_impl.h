@@ -56,18 +56,9 @@ class PathPlannerSVC_impl
    	mrpt::poses::CPose2D getStart(){return start;}
 	mrpt::poses::CPose2D getGoal(){return goal;}
 
-	void setStart(const RTC::TimedPose2D & tp, const RTC::OGMap & map){
-		start.x(map.map.column + tp.data.position.x / map.config.yScale);
-		start.y(map.map.row + tp.data.position.y / map.config.yScale);
-		start.phi(tp.data.heading);
-	}
-	void setGoal(const RTC::TimedPose2D & tp, const RTC::OGMap & map){
-		goal.x(map.map.column + tp.data.position.x / map.config.xScale);
-		goal.y(map.map.row + tp.data.position.y / map.config.yScale);
-		goal.phi(tp.data.heading);
-	}
+	void setStart(const RTC::TimedPose2D & tp, const RTC::OGMap & map);
+	void setGoal(const RTC::TimedPose2D & tp, const RTC::OGMap & map);
 	void OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyGridMap2D *gridmap);
-
 };
 
 #endif // MOBILEROBOTSVC_IMPL_H

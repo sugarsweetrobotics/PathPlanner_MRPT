@@ -8,8 +8,6 @@
 #include "MobileRobotSVC_impl.h"
 #include <iostream>
 
-#include<fstream>
-
 #include <mrpt/slam/COccupancyGridMap2D.h>
 #include <mrpt/slam/CPathPlanningCircularRobot.h>
 #include <mrpt/poses/CPose2D.h>
@@ -44,6 +42,17 @@ PathPlannerSVC_impl::~PathPlannerSVC_impl()
  * Methods corresponding to IDL attributes and operations
  */
 
+void PathPlannerSVC_impl::setStart(const RTC::TimedPose2D & tp, const RTC::OGMap & map){
+		start.x(map.map.column + tp.data.position.x / map.config.yScale);
+		start.y(map.map.row + tp.data.position.y / map.config.yScale);
+		start.phi(tp.data.heading);
+	}
+void PathPlannerSVC_impl::setGoal(const RTC::TimedPose2D & tp, const RTC::OGMap & map){
+		goal.x(map.map.column + tp.data.position.x / map.config.xScale);
+		goal.y(map.map.row + tp.data.position.y / map.config.yScale);
+		goal.phi(tp.data.heading);
+	}
+
 void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyGridMap2D *gridmap) {
 	gridmap->setSize(0, ogmap.map.width, 0, ogmap.map.height, 1, 0.5f);
 	int height = gridmap->getSizeY();
@@ -51,18 +60,16 @@ void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyG
 
 	for(int i=0; i <height ; i++){
 		for(int j=0; j <width ; j++){
-			int index = i * width + j;
-			int cell = ogmap.map.cells[index];
+			int cell = ogmap.map.cells[i * width + j];
 	
 			if(cell < 100){
 				gridmap->setCell(j, i, 0.0);
-				//cout<<"occupy  "<< i <<"  "<< j <<"  "<<gridmap->getCell(i,j)<<endl;
 			}
 			else if(cell > 200){
 				gridmap->setCell(j, i, 1.0);
 			}
 			else{
-				//gridmap->setCell(i, j, 0.5);
+				gridmap->setCell(i, j, 0.5);
 			}
 		}
 	}
@@ -72,30 +79,27 @@ void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyG
 RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC::TimedPose2D & currentPose,const RTC::TimedPose2D & targetGoal ,RTC::Path2D_out path)
 {
 	RETURN_VALUE result = RETVAL_OK;
-	cout << "Start Path Planning... " << endl;
-	cout << "Start: " << currentPose.data.position.x <<" "<<currentPose.data.position.y<< endl;
-	cout << "Goal: " << targetGoal.data.position.x <<" "<<targetGoal.data.position.y<< endl;
-
-	CPathPlanningCircularRobot pathPlanning;
-	pathPlanning.robotRadius = 0.30f;//robot radius should be able to change by configuration
-		
-	COccupancyGridMap2D gridmap;
-	OGMapToCOccupancyGridMap(map, &gridmap);
-	//test
-	gridmap.saveAsBitmapFile("map.png");
-
+	cout << "Start Path Planning..." << endl;
+	cout << "  Start: " << currentPose.data.position.x <<","<<currentPose.data.position.y << endl;
+	cout << "  Goal: " << targetGoal.data.position.x <<","<<targetGoal.data.position.y << endl;
+	
 	//TimedPose2d -> CPose2D	
 	setStart(currentPose,map);
 	setGoal(targetGoal,map);
-
-	cout << "Origin: " << getStart() << endl;
-	cout << "Target: " << getGoal() << endl;
-
+	
+	//OGMap -> COccupancyGridMap2D
+	COccupancyGridMap2D gridmap;
+	OGMapToCOccupancyGridMap(map, &gridmap);
+			
+	//Plan path
+	CPathPlanningCircularRobot pathPlanning;
+	pathPlanning.robotRadius = 0.35f;//robot radius should be able to change by configuration
 	bool notFound = false;
 	std::deque <TPoint2D> tPath;
-		
-	//plan path
+
 	pathPlanning.computePath(gridmap, getStart(), getGoal(), tPath, notFound, -1);//maxSearchPathLength should be able to change by configuration
+	
+	//Any path was not found
 	if(notFound){
 		cout << "No path was founded"<<endl;
 		cout <<endl;
@@ -103,20 +107,19 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC
 		
 		result = RETVAL_INVALID_PARAMETER;
 	}
+
+	//deque <TPoint2D>  -> Path2D_out
 	else{
-		//deque <TPoint2D>  -> Path2D_out
-		path = new RTC::Path2D(); //Ç‡ÇµÇ©ÇµÇΩÇÁpath = new RTC::Path2D_out.ptr();Ç©Ç‡ÅH
+		cout << "Done."<<endl;
+
+		path = new RTC::Path2D(); //path = new RTC::Path2D_out.ptr();ÅH
 		path->waypoints.length(tPath.size());
 
-		ofstream ofs( "filename.csv");
-
 		for(int i = 0;i < tPath.size(); i++) {
-			path->waypoints[i].target.position.x = tPath[i].x;//.x - map.map.column) * map.config.xScale;
-			path->waypoints[i].target.position.y =398- tPath[i].y;//.y + map.map.row) * map.config.yScale;
-			ofs<<path->waypoints[i].target.position.x<<","<<path->waypoints[i].target.position.y<<endl;
+			path->waypoints[i].target.position.x = (tPath[i].x - map.map.column) * map.config.xScale;
+			path->waypoints[i].target.position.y = (tPath[i].y - map.map.row) * map.config.yScale;
 		}
-
-		std::cout << "path length:"<< path->waypoints.length() << endl;
+		std::cout << "  Path length:"<< path->waypoints.length() << endl;
 		cout <<endl;
 	}
 	return result;
