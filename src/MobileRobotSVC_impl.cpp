@@ -57,17 +57,12 @@ void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyG
 			if(cell < 100){
 				gridmap->setCell(j, i, 0.0);
 				//cout<<"occupy  "<< i <<"  "<< j <<"  "<<gridmap->getCell(i,j)<<endl;
-				//ofs<<gridmap->getCell(i,j)<<endl;
 			}
 			else if(cell > 200){
 				gridmap->setCell(j, i, 1.0);
-				//cout<<"empty   "<< i <<"  "<< j <<"  "<<gridmap->getCell(i,j)<<endl;
-			//	ofs<<gridmap->getCell(i,j)<<endl;
 			}
 			else{
 				//gridmap->setCell(i, j, 0.5);
-		//		cout<<"gray    "<< i <<"  "<< j <<"  "<<gridmap->getCell(i,j)<<endl;
-			//	ofs<<gridmap->getCell(i,j)<<endl;
 			}
 		}
 	}
@@ -104,8 +99,9 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC
 	if(notFound){
 		cout << "No path was founded"<<endl;
 		cout <<endl;
-		//return RETVAL_NOTFOUND_PATH;
-		return result;
+		path = new RTC::Path2D();
+		
+		result = RETVAL_INVALID_PARAMETER;
 	}
 	else{
 		//deque <TPoint2D>  -> Path2D_out
@@ -116,14 +112,14 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC
 
 		for(int i = 0;i < tPath.size(); i++) {
 			path->waypoints[i].target.position.x = tPath[i].x;//.x - map.map.column) * map.config.xScale;
-			path->waypoints[i].target.position.y = tPath[i].y;//.y + map.map.row) * map.config.yScale;
+			path->waypoints[i].target.position.y =398- tPath[i].y;//.y + map.map.row) * map.config.yScale;
 			ofs<<path->waypoints[i].target.position.x<<","<<path->waypoints[i].target.position.y<<endl;
 		}
 
 		std::cout << "path length:"<< path->waypoints.length() << endl;
 		cout <<endl;
-		return result;
 	}
+	return result;
 }
 
 // End of example implementational code
