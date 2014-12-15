@@ -41,16 +41,15 @@ PathPlannerSVC_impl::~PathPlannerSVC_impl()
 /*
  * Methods corresponding to IDL attributes and operations
  */
-
-void PathPlannerSVC_impl::setStart(const RTC::TimedPose2D & tp, const RTC::OGMap & map){
-		start.x(map.map.column + tp.data.position.x / map.config.yScale);
-		start.y(map.map.row + tp.data.position.y / map.config.yScale);
-		start.phi(tp.data.heading);
+void PathPlannerSVC_impl::setStart(const RTC::Pose2D & tp, const RTC::OGMap & map){
+		start.x(map.map.column + tp.position.x / map.config.yScale);
+		start.y(map.map.row + tp.position.y / map.config.yScale);
+		start.phi(tp.heading);
 	}
-void PathPlannerSVC_impl::setGoal(const RTC::TimedPose2D & tp, const RTC::OGMap & map){
-		goal.x(map.map.column + tp.data.position.x / map.config.xScale);
-		goal.y(map.map.row + tp.data.position.y / map.config.yScale);
-		goal.phi(tp.data.heading);
+void PathPlannerSVC_impl::setGoal(const RTC::Pose2D & tp, const RTC::OGMap & map){
+		goal.x(map.map.column + tp.position.x / map.config.xScale);
+		goal.y(map.map.row + tp.position.y / map.config.yScale);
+		goal.phi(tp.heading);
 	}
 
 void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyGridMap2D *gridmap) {
@@ -74,36 +73,34 @@ void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyG
 		}
 	}
 }
-
-
-RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC::TimedPose2D & currentPose,const RTC::TimedPose2D & targetGoal ,RTC::Path2D_out path)
+RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& param, RTC::Path2D_out outPath)
 {
 	RETURN_VALUE result = RETVAL_OK;
 	cout << "Start Path Planning..." << endl;
-	cout << "  Start: " << currentPose.data.position.x <<","<<currentPose.data.position.y << endl;
-	cout << "  Goal: " << targetGoal.data.position.x <<","<<targetGoal.data.position.y << endl;
-	
+	cout << "  Start: " << param.currentPose.position.x <<","<<param.currentPose.position.y << endl;
+	cout << "  Goal: " << param.targetPose.position.x <<","<<param.targetPose.position.y << endl;
+
 	//TimedPose2d -> CPose2D	
-	setStart(currentPose,map);
-	setGoal(targetGoal,map);
+	setStart(param.currentPose, param.map);
+	setGoal(param.targetPose, param.map);
 	
 	//OGMap -> COccupancyGridMap2D
 	COccupancyGridMap2D gridmap;
-	OGMapToCOccupancyGridMap(map, &gridmap);
+	OGMapToCOccupancyGridMap(param.map, &gridmap);
 			
 	//Plan path
 	CPathPlanningCircularRobot pathPlanning;
-	pathPlanning.robotRadius = 0.35f;//robot radius should be able to change by configuration
+	pathPlanning.robotRadius = getRadius();
 	bool notFound = false;
 	std::deque <TPoint2D> tPath;
 
-	pathPlanning.computePath(gridmap, getStart(), getGoal(), tPath, notFound, -1);//maxSearchPathLength should be able to change by configuration
+	pathPlanning.computePath(gridmap, getStart(), getGoal(), tPath, notFound, getPathLength());
 	
 	//Any path was not found
 	if(notFound){
 		cout << "No path was founded"<<endl;
 		cout <<endl;
-		path = new RTC::Path2D();
+		outPath = new RTC::Path2D();
 		
 		result = RETVAL_INVALID_PARAMETER;
 	}
@@ -112,18 +109,26 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::OGMap & map,const RTC
 	else{
 		cout << "Done."<<endl;
 
-		path = new RTC::Path2D(); //path = new RTC::Path2D_out.ptr();H
-		path->waypoints.length(tPath.size());
+		outPath = new RTC::Path2D(); 
+		outPath->waypoints.length(tPath.size());
 
 		for(int i = 0;i < tPath.size(); i++) {
-			path->waypoints[i].target.position.x = (tPath[i].x - map.map.column) * map.config.xScale;
-			path->waypoints[i].target.position.y = (tPath[i].y - map.map.row) * map.config.yScale;
+			outPath->waypoints[i].target.position.x = (tPath[i].x - param.map.map.column) * param.map.config.xScale;
+			outPath->waypoints[i].target.position.y = (tPath[i].y - param.map.map.row) * param.map.config.yScale;
 		}
-		std::cout << "  Path length:"<< path->waypoints.length() << endl;
+		std::cout << "  Path length:"<< outPath->waypoints.length() << endl;
 		cout <<endl;
 	}
 	return result;
 }
+
+
+
+
+
+
+
+
 
 // End of example implementational code
 

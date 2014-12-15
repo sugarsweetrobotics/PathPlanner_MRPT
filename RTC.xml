@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<rtc:RtcProfile rtc:version="0.2" rtc:id="RTC:Sugar Sweet Robotics:Navigatio:PathPlanner_MRPT:1.0.0" xmlns:rtc="http://www.openrtp.org/namespaces/rtc" xmlns:rtcExt="http://www.openrtp.org/namespaces/rtc_ext" xmlns:rtcDoc="http://www.openrtp.org/namespaces/rtc_doc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <rtc:BasicInfo xsi:type="rtcExt:basic_info_ext" rtcExt:saveProject="PathPlanner_MRPT" rtc:updateDate="2014-09-05T12:54:27+09:00" rtc:creationDate="2014-09-05T12:54:27+09:00" rtc:version="1.0.0" rtc:vendor="Sugar Sweet Robotics" rtc:maxInstances="1" rtc:executionType="PeriodicExecutionContext" rtc:executionRate="1000.0" rtc:description="Path Planner MRPT component" rtc:category="Navigatio" rtc:componentKind="DataFlowComponent" rtc:activityType="PERIODIC" rtc:componentType="STATIC" rtc:name="PathPlanner_MRPT">
+<rtc:RtcProfile rtc:version="0.2" rtc:id="RTC:Sugar Sweet Robotics:Navigatio:PathPlanner_MRPT:1.1.0" xmlns:rtc="http://www.openrtp.org/namespaces/rtc" xmlns:rtcExt="http://www.openrtp.org/namespaces/rtc_ext" xmlns:rtcDoc="http://www.openrtp.org/namespaces/rtc_doc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <rtc:BasicInfo xsi:type="rtcExt:basic_info_ext" rtcExt:saveProject="PathPlanner_MRPT" rtc:updateDate="2014-09-05T12:54:27+09:00" rtc:creationDate="2014-09-05T12:54:27+09:00" rtc:version="1.1.0" rtc:vendor="Sugar Sweet Robotics" rtc:maxInstances="1" rtc:executionType="ExtTrigExecutionContext" rtc:executionRate="1000.0" rtc:description="Path Planner MRPT component" rtc:category="Navigatio" rtc:componentKind="DataFlowComponent" rtc:activityType="PERIODIC" rtc:componentType="STATIC" rtc:name="PathPlanner_MRPT">
         <rtcExt:VersionUpLogs></rtcExt:VersionUpLogs>
     </rtc:BasicInfo>
     <rtc:Actions>
@@ -21,6 +21,12 @@
     </rtc:Actions>
     <rtc:ConfigurationSet>
         <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="debug" rtc:unit="" rtc:defaultValue="0" rtc:type="int" rtc:name="debug">
+            <rtcExt:Properties rtcExt:value="text" rtcExt:name="__widget__"/>
+        </rtc:Configuration>
+        <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="robotRadius" rtc:unit="" rtc:defaultValue="0.35" rtc:type="float" rtc:name="RobotRadius">
+            <rtcExt:Properties rtcExt:value="text" rtcExt:name="__widget__"/>
+        </rtc:Configuration>
+        <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="" rtc:unit="" rtc:defaultValue="-1" rtc:type="float" rtc:name="maxSearchPathLength">
             <rtcExt:Properties rtcExt:value="text" rtcExt:name="__widget__"/>
         </rtc:Configuration>
     </rtc:ConfigurationSet>

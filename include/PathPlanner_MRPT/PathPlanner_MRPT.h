@@ -231,6 +231,18 @@ class PathPlanner_MRPT
    * - DefaultValue: 0
    */
   int m_debug;
+  /*!
+   * 
+   * - Name:  robotRadius
+   * - DefaultValue: 0.35
+   */
+  float m_robotRadius;
+  /*!
+   * 
+   * - Name:  maxSearchPathLength
+   * - DefaultValue: -1
+   */
+  float m_maxSearchPathLength;
 
   // </rtc-template>
 

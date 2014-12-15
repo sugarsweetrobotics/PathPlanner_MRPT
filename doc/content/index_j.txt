@@ -99,6 +99,8 @@ PathPlanner_MRPTは ``PathPlanner_MRPTComp`` を実行（ ``${prefix}/components
 パラメータ       データ型           デフォルト値     意味
 ================ ================== ================ ====
 debug            int                0                
+RobotRadius      float              0.35             
+maxSearchPathLength float              -1               
 ================ ================== ================ ====
 
 ポート
