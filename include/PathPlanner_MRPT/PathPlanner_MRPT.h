@@ -41,6 +41,7 @@ class PathPlanner_MRPT
   : public RTC::DataFlowComponentBase
 {
  public:
+	 EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   /*!
    * @brief constructor
    * @param manager Maneger Object
@@ -230,6 +231,18 @@ class PathPlanner_MRPT
    * - DefaultValue: 0
    */
   int m_debug;
+  /*!
+   * 
+   * - Name:  robotRadius
+   * - DefaultValue: 0.35
+   */
+  float m_robotRadius;
+  /*!
+   * 
+   * - Name:  maxSearchPathLength
+   * - DefaultValue: -1
+   */
+  float m_maxSearchPathLength;
 
   // </rtc-template>
 

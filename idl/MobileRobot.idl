@@ -42,40 +42,11 @@ module RTC {
     MAPPER_UNKNOWN
   };
 
-  /*!
-   * @interface OGMapper
-   * @brief Occupancy Grid Map Builder Service Interface
-   */
-  interface OGMapper {
-    
-    /// Initialize Current Build Map Data
-    RETURN_VALUE initializeMap(in OGMapConfig config, in Pose2D initialPose);
-
-    RETURN_VALUE startMapping();
-
-    RETURN_VALUE stopMapping();
-
-    RETURN_VALUE suspendMapping();
-
-    RETURN_VALUE resumeMapping();
-
-    RETURN_VALUE getState(out MAPPER_STATE state);
-
-    /// Request Current Build Map Data
-    RETURN_VALUE requestCurrentBuiltMap(out OGMap map);
-  };
-
-  /*!
-   * @interface OGMapServer
-   * @brief Occupancy Grid Map Service Interface
-   */
-  interface OGMapServer {
-    
-    /// Request Current Build Map Data
-    RETURN_VALUE requestCurrentBuiltMap(out OGMap map);
-  };
+ 
   
   struct PathPlanParameter {
+	//Environmental Map
+	OGMap map;
     /// Location of the goal.
     Pose2D targetPose;
     /// Location of Robot.
@@ -92,7 +63,9 @@ module RTC {
   
   interface PathPlanner {
     /// Plan Path from PathPlanParater.
-    RETURN_VALUE planPath(in PathPlanParameter param, out Path2D path);
+    //RETURN_VALUE planPath(in PathPlanParameter param, out Path2D path);
+	  RETURN_VALUE planPath(in PathPlanParameter param, out Path2D outPath);
+
   };
 
 };

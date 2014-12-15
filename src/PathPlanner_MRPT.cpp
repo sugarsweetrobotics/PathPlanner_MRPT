@@ -16,7 +16,7 @@ static const char* pathplanner_mrpt_spec[] =
     "implementation_id", "PathPlanner_MRPT",
     "type_name",         "PathPlanner_MRPT",
     "description",       "Path Planner MRPT component",
-    "version",           "1.0.0",
+    "version",           "1.1.0",
     "vendor",            "Sugar Sweet Robotics",
     "category",          "Navigatio",
     "activity_type",     "PERIODIC",
@@ -26,8 +26,12 @@ static const char* pathplanner_mrpt_spec[] =
     "lang_type",         "compile",
     // Configuration variables
     "conf.default.debug", "0",
+    "conf.default.RobotRadius", "0.35",
+    "conf.default.maxSearchPathLength", "-1",
     // Widget
     "conf.__widget__.debug", "text",
+    "conf.__widget__.RobotRadius", "text",
+    "conf.__widget__.maxSearchPathLength", "text",
     // Constraints
     ""
   };
@@ -76,8 +80,12 @@ RTC::ReturnCode_t PathPlanner_MRPT::onInitialize()
   // <rtc-template block="bind_config">
   // Bind variables and configuration variable
   bindParameter("debug", m_debug, "0");
+  bindParameter("RobotRadius", m_robotRadius, "0.35");
+  bindParameter("maxSearchPathLength", m_maxSearchPathLength, "-1");
   // </rtc-template>
   
+  m_pathPlanner.setConfig(m_robotRadius, m_maxSearchPathLength);
+
   return RTC::RTC_OK;
 }
 

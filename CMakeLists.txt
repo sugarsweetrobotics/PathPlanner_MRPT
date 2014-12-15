@@ -55,6 +55,12 @@ else(${OpenRTM_FOUND})
 endif(${OpenRTM_FOUND})
 
 # Universal settings
+
+find_package(MRPT REQUIRED base obs gui slam hwdrivers maps)
+
+
+
+
 #enable_testing()
 
 # Subdirectories
