@@ -42,18 +42,18 @@ PathPlannerSVC_impl::~PathPlannerSVC_impl()
  * Methods corresponding to IDL attributes and operations
  */
 void PathPlannerSVC_impl::setStart(const RTC::Pose2D & tp, const RTC::OGMap & map){
-		start.x(map.map.column + tp.position.x / map.config.yScale);
-		start.y(map.map.row + tp.position.y / map.config.yScale);
-		start.phi(tp.heading);
+	start.x(tp.position.x);
+	start.y(tp.position.y);
+	start.phi(tp.heading);
 	}
 void PathPlannerSVC_impl::setGoal(const RTC::Pose2D & tp, const RTC::OGMap & map){
-		goal.x(map.map.column + tp.position.x / map.config.xScale);
-		goal.y(map.map.row + tp.position.y / map.config.yScale);
-		goal.phi(tp.heading);
+	goal.x(tp.position.x);
+	goal.y(tp.position.y);
+	goal.phi(tp.heading);
 	}
 
 void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyGridMap2D *gridmap) {
-	gridmap->setSize(0, ogmap.map.width, 0, ogmap.map.height, 1, 0.5f);
+	gridmap->setSize(0-ogmap.map.width*ogmap.config.xScale/2, ogmap.map.width*ogmap.config.xScale/2, 0-ogmap.map.width*ogmap.config.yScale/2, ogmap.map.height*ogmap.config.yScale/2, ogmap.config.xScale);
 	int height = gridmap->getSizeY();
 	int width =  gridmap->getSizeX();
 
@@ -113,8 +113,8 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& pa
 		outPath->waypoints.length(tPath.size());
 
 		for(int i = 0;i < tPath.size(); i++) {
-			outPath->waypoints[i].target.position.x = (tPath[i].x - param.map.map.column) * param.map.config.xScale;
-			outPath->waypoints[i].target.position.y = (tPath[i].y - param.map.map.row) * param.map.config.yScale;
+			outPath->waypoints[i].target.position.x = tPath[i].x ;
+			outPath->waypoints[i].target.position.y = tPath[i].y ;
 		}
 		std::cout << "  Path length:"<< outPath->waypoints.length() << endl;
 		cout <<endl;
