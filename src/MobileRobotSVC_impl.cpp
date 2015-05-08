@@ -12,7 +12,6 @@
 #include <mrpt/slam/CPathPlanningCircularRobot.h>
 #include <mrpt/poses/CPose2D.h>
 
-
 using namespace mrpt;
 using namespace mrpt::slam;
 using namespace std;
@@ -53,13 +52,27 @@ void PathPlannerSVC_impl::setGoal(const RTC::Pose2D & tp, const RTC::OGMap & map
 	}
 
 void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyGridMap2D *gridmap) {
-	gridmap->setSize(0-ogmap.map.width*ogmap.config.xScale/2, ogmap.map.width*ogmap.config.xScale/2, 0-ogmap.map.width*ogmap.config.yScale/2, ogmap.map.height*ogmap.config.yScale/2, ogmap.config.xScale);
+	gridmap->setSize(
+		-ogmap.config.origin.position.x,
+		ogmap.map.width * ogmap.config.xScale - ogmap.config.origin.position.x,
+		-(ogmap.map.height * ogmap.config.yScale + ogmap.config.origin.position.y),
+		-ogmap.config.origin.position.y,
+		ogmap.config.xScale);
+		/*
+		0-ogmap.map.width*ogmap.config.xScale/2,
+		ogmap.map.width*ogmap.config.xScale/2,
+		0-ogmap.map.height*ogmap.config.yScale/2,
+		ogmap.map.height*ogmap.config.yScale/2,
+		ogmap.config.xScale);*/
+
+
 	int height = gridmap->getSizeY();
 	int width =  gridmap->getSizeX();
 
+
 	for(int i=0; i <height ; i++){
 		for(int j=0; j <width ; j++){
-			int cell = ogmap.map.cells[i * width + j];
+			int cell = ogmap.map.cells[(height -i -1) * width + j];
 	
 			if(cell < 100){
 				gridmap->setCell(j, i, 0.0);
@@ -68,10 +81,11 @@ void PathPlannerSVC_impl::OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyG
 				gridmap->setCell(j, i, 1.0);
 			}
 			else{
-				gridmap->setCell(i, j, 0.5);
+				gridmap->setCell(j, i, 1.0);
 			}
 		}
 	}
+	gridmap->saveAsBitmapFile("C:\\testout.bmp");
 }
 RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& param, RTC::Path2D_out outPath)
 {
@@ -90,11 +104,12 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& pa
 			
 	//Plan path
 	CPathPlanningCircularRobot pathPlanning;
+	//PlannerSimple2D pathPlanning;
 	pathPlanning.robotRadius = getRadius();
-	bool notFound = false;
+	bool notFound = true;
 	std::deque <TPoint2D> tPath;
 
-	pathPlanning.computePath(gridmap, getStart(), getGoal(), tPath, notFound, getPathLength());
+	pathPlanning.computePath(gridmap, getStart(), getGoal(), tPath, notFound, this->getPathLength());
 	
 	//Any path was not found
 	if(notFound){
