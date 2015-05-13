@@ -28,6 +28,10 @@ static const char* pathplanner_mrpt_spec[] =
     "conf.default.debug", "0",
     "conf.default.RobotRadius", "0.35",
     "conf.default.maxSearchPathLength", "-1",
+	"conf.default.pathDistanceTolerance", "0.5",
+	"conf.default.pathHeadingTolerance", "0.5",
+	"conf.default.goalDistanceTolerance", "0.5",
+	"conf.default.goalHeadingTolerance", "0.5",
     // Widget
     "conf.__widget__.debug", "text",
     "conf.__widget__.RobotRadius", "text",
@@ -69,7 +73,7 @@ RTC::ReturnCode_t PathPlanner_MRPT::onInitialize()
   
   // Set service provider to Ports
   m_pathPlannerPort.registerProvider("PathPlanner", "RTC::PathPlanner", m_pathPlanner);
-  
+  m_pathPlanner.setRTC(this);
   // Set service consumers to Ports
   
   // Set CORBA Service Ports
@@ -82,6 +86,11 @@ RTC::ReturnCode_t PathPlanner_MRPT::onInitialize()
   bindParameter("debug", m_debug, "0");
   bindParameter("RobotRadius", m_robotRadius, "0.35");
   bindParameter("maxSearchPathLength", m_maxSearchPathLength, "-1");
+
+  bindParameter("pathDistanceTolerance", m_pathDistanceTolerance, "0.5");
+  bindParameter("pathHeadingTolerance", m_pathHeadingTolerance, "0.5");
+  bindParameter("goalDistanceTolerance", m_goalDistanceTolerance, "0.5");
+  bindParameter("goalHeadingTolerance", m_goalHeadingTolerance, "0.5");
   // </rtc-template>
   
   m_pathPlanner.setConfig(m_robotRadius, m_maxSearchPathLength);

@@ -244,7 +244,22 @@ class PathPlanner_MRPT
    */
   float m_maxSearchPathLength;
 
+  float m_pathDistanceTolerance;
+  float m_pathHeadingTolerance;
+
+  float m_goalDistanceTolerance;
+  float m_goalHeadingTolerance;
+
   // </rtc-template>
+
+public:
+
+
+	float getPathDistnaceTolerance() {return m_pathDistanceTolerance; }
+	float getPathHeadingTolerance() {return m_pathHeadingTolerance; }
+	float getGoalDistnaceTolerance() {return m_goalDistanceTolerance; }
+	float getGoalHeadingTolerance() {return m_goalHeadingTolerance; }
+private:
 
   // DataInPort declaration
   // <rtc-template block="inport_declare">

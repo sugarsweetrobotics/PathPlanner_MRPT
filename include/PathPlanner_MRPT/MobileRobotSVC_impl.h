@@ -24,7 +24,7 @@ using namespace mrpt;
 using namespace mrpt::slam;
 using namespace std;
 
-
+class PathPlanner_MRPT;
 /*!
  * @class PathPlannerSVC_impl
  * Example class implementing IDL interface RTC::PathPlanner
@@ -34,12 +34,18 @@ class PathPlannerSVC_impl
    public virtual PortableServer::RefCountServantBase
 {
  private:
+
+	 PathPlanner_MRPT *m_pRTC;
+
 	mrpt::poses::CPose2D start;
 	mrpt::poses::CPose2D goal;
 	float RADIUS;
 	float PATH_LENGTH;
 
+public:
+	void setRTC(PathPlanner_MRPT* pRTC) { m_pRTC = pRTC; }
  public:
+	 
 	 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   /*!

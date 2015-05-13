@@ -12,6 +12,9 @@
 #include <mrpt/slam/CPathPlanningCircularRobot.h>
 #include <mrpt/poses/CPose2D.h>
 
+
+#include "PathPlanner_MRPT.h"
+
 using namespace mrpt;
 using namespace mrpt::slam;
 using namespace std;
@@ -122,6 +125,14 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& pa
 
 	//deque <TPoint2D>  -> Path2D_out
 	else{
+
+		double distanceTolerance = m_pRTC->getPathDistnaceTolerance() < param.distanceTolerance ? m_pRTC->getPathDistnaceTolerance() : param.distanceTolerance;
+		double angularTolerance = m_pRTC->getPathHeadingTolerance() < param.headingTolerance ? m_pRTC->getPathHeadingTolerance() : param.headingTolerance;
+		double maxSpeedX = param.maxSpeed.vx;
+		double maxSpeedY = param.maxSpeed.vy;
+		double maxSpeedTh = param.maxSpeed.va;
+		double goalDistanceTolerance = m_pRTC->getGoalDistnaceTolerance() < distanceTolerance ? m_pRTC->getGoalDistnaceTolerance() : distanceTolerance;
+		double goalAngularTolerance = m_pRTC->getGoalHeadingTolerance() < angularTolerance ? m_pRTC->getGoalHeadingTolerance() : angularTolerance;
 		cout << "Done."<<endl;
 
 		outPath = new RTC::Path2D(); 
@@ -130,6 +141,17 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& pa
 		for(int i = 0;i < tPath.size(); i++) {
 			outPath->waypoints[i].target.position.x = tPath[i].x ;
 			outPath->waypoints[i].target.position.y = tPath[i].y ;
+			if (i == tPath.size() -1) {
+				//Goal
+				outPath->waypoints[i].distanceTolerance = goalDistanceTolerance;
+				outPath->waypoints[i].headingTolerance  = goalAngularTolerance;
+			} else {
+				outPath->waypoints[i].distanceTolerance = distanceTolerance;
+				outPath->waypoints[i].headingTolerance  = angularTolerance;
+			}
+			outPath->waypoints[i].maxSpeed.vx = maxSpeedX;
+			outPath->waypoints[i].maxSpeed.vy = maxSpeedY;
+			outPath->waypoints[i].maxSpeed.va = maxSpeedTh;
 		}
 		std::cout << "  Path length:"<< outPath->waypoints.length() << endl;
 		cout <<endl;
