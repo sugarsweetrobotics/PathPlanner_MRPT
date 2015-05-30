@@ -302,6 +302,8 @@ private:
   
   // </rtc-template>
 
+	 friend class PathPlannerSVC_impl;
+
 };
 
 

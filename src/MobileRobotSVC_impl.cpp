@@ -112,6 +112,7 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& pa
 	bool notFound = true;
 	std::deque <TPoint2D> tPath;
 
+	pathPlanning.robotRadius = m_pRTC->m_robotRadius;
 	pathPlanning.computePath(gridmap, getStart(), getGoal(), tPath, notFound, this->getPathLength());
 	
 	//Any path was not found
