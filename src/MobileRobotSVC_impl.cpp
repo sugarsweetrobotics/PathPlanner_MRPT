@@ -9,7 +9,8 @@
 #include <iostream>
 
 #include <mrpt/slam/COccupancyGridMap2D.h>
-#include <mrpt/slam/CPathPlanningCircularRobot.h>
+//#include <mrpt/slam/CPathPlanningCircularRobot.h>
+#include <mrpt/nav/planners/PlannerSimple2D.h>
 #include <mrpt/poses/CPose2D.h>
 
 
@@ -29,8 +30,8 @@ using namespace RTC;
 
 PathPlannerSVC_impl::PathPlannerSVC_impl()
 {
-	CPose2D start(0,0,0);
-	CPose2D goal(0,0,0);
+  mrpt::poses::CPose2D start(0,0,0);
+  mrpt::poses::CPose2D goal(0,0,0);
 }
 
 
@@ -102,15 +103,16 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& pa
 	setGoal(param.targetPose, param.map);
 	
 	//OGMap -> COccupancyGridMap2D
-	COccupancyGridMap2D gridmap;
+	mrpt::maps::COccupancyGridMap2D gridmap;
 	OGMapToCOccupancyGridMap(param.map, &gridmap);
 			
 	//Plan path
-	CPathPlanningCircularRobot pathPlanning;
-	//PlannerSimple2D pathPlanning;
+	//CPathPlanningCircularRobot pathPlanning;
+	
+	mrpt::nav::PlannerSimple2D pathPlanning;
 	pathPlanning.robotRadius = getRadius();
 	bool notFound = true;
-	std::deque <TPoint2D> tPath;
+	std::deque <mrpt::math::TPoint2D> tPath;
 
 	pathPlanning.robotRadius = m_pRTC->m_robotRadius;
 	pathPlanning.computePath(gridmap, getStart(), getGoal(), tPath, notFound, this->getPathLength());

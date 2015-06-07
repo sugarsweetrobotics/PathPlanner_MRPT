@@ -16,12 +16,13 @@
  
 #include <iostream>
 
-#include <mrpt/slam/COccupancyGridMap2D.h>
-#include <mrpt/slam/CPathPlanningCircularRobot.h>
+#include <mrpt/maps/COccupancyGridMap2D.h>
+//#include <mrpt/nav/planners/CPathPlanningCircularRobot.h>
+#include <mrpt/nav/planners/PlannerSimple2D.h>
 #include <mrpt/poses/CPose2D.h>
 
 using namespace mrpt;
-using namespace mrpt::slam;
+//using namespace mrpt::slam;
 using namespace std;
 
 class PathPlanner_MRPT;
@@ -73,7 +74,7 @@ public:
 
 	void setStart(const RTC::Pose2D & tp, const RTC::OGMap & map);
 	void setGoal(const RTC::Pose2D & tp, const RTC::OGMap & map);
-	void OGMapToCOccupancyGridMap(RTC::OGMap ogmap, COccupancyGridMap2D *gridmap);
+void OGMapToCOccupancyGridMap(RTC::OGMap ogmap, mrpt::maps::COccupancyGridMap2D *gridmap);
 };
 
 #endif // MOBILEROBOTSVC_IMPL_H
