@@ -18,7 +18,7 @@ static const char* pathplanner_mrpt_spec[] =
     "description",       "Path Planner MRPT component",
     "version",           "1.1.0",
     "vendor",            "Sugar Sweet Robotics",
-    "category",          "Navigatio",
+    "category",          "Navigation",
     "activity_type",     "PERIODIC",
     "kind",              "DataFlowComponent",
     "max_instance",      "1",
