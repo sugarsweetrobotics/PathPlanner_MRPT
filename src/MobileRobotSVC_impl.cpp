@@ -95,7 +95,7 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& pa
 	RETURN_VALUE result = RETVAL_OK;
 	cout << "Start Path Planning..." << endl;
 	cout << "  Start: " << param.currentPose.position.x <<","<<param.currentPose.position.y << endl;
-	cout << "  Goal: " << param.targetPose.position.x <<","<<param.targetPose.position.y << endl;
+	cout << "  Goal: " << param.targetPose.position.x <<","<<param.targetPose.position.y << "," << param.targetPose.heading << std::endl;
 
 	//TimedPose2d -> CPose2D	
 	setStart(param.currentPose, param.map);
@@ -153,7 +153,14 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& pa
 			outPath->waypoints[i].maxSpeed.vx = maxSpeedX;
 			outPath->waypoints[i].maxSpeed.vy = maxSpeedY;
 			outPath->waypoints[i].maxSpeed.va = maxSpeedTh;
+
+			if (i < tPath.size()-1) {
+				double dx = tPath[i+1].x - tPath[i].x;
+				double dy = tPath[i+1].y - tPath[i].y;
+				outPath->waypoints[i].target.heading = atan2(dy, dx);
+			}
 		}
+		outPath->waypoints[tPath.size()-1].target.heading = this->getGoal().phi();
 		std::cout << "  Path length:"<< outPath->waypoints.length() << endl;
 		cout <<endl;
 	}
