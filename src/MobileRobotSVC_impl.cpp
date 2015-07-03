@@ -9,8 +9,11 @@
 #include <iostream>
 
 #include <mrpt/slam/COccupancyGridMap2D.h>
-//#include <mrpt/slam/CPathPlanningCircularRobot.h>
+#ifdef WIN32
+#include <mrpt/nav/planners/CPathPlanningCircularRobot.h>
+#else
 #include <mrpt/nav/planners/PlannerSimple2D.h>
+#endif
 #include <mrpt/poses/CPose2D.h>
 
 
@@ -107,9 +110,11 @@ RTC::RETURN_VALUE PathPlannerSVC_impl::planPath(const RTC::PathPlanParameter& pa
 	OGMapToCOccupancyGridMap(param.map, &gridmap);
 			
 	//Plan path
-	//CPathPlanningCircularRobot pathPlanning;
-	
+#ifdef WIN32
+	mrpt::nav::CPathPlanningCircularRobot pathPlanning;
+#else
 	mrpt::nav::PlannerSimple2D pathPlanning;
+#endif
 	pathPlanning.robotRadius = getRadius();
 	bool notFound = true;
 	std::deque <mrpt::math::TPoint2D> tPath;
